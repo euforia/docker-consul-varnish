@@ -2,7 +2,7 @@ vcl 4.0;
 
 import directors;
 {{range $index, $elem := service "REPLACE"}}
-backend {{ .Name }}{{ $index }} {
+backend {{ .Name | replaceAll "-" "_" }}{{ $index }} {
     .host = "{{.Address}}";
     .port = "{{.Port}}";
 }{{end}}
@@ -10,7 +10,7 @@ backend {{ .Name }}{{ $index }} {
 sub vcl_init {
   new bar = directors.round_robin();
 {{range $index, $elem := service "REPLACE"}}
-  bar.add_backend({{ .Name }}{{ $index }});{{end}}
+  bar.add_backend({{ .Name | replaceAll "-" "_" }}{{ $index }});{{end}}
 }
 
 sub vcl_recv {
